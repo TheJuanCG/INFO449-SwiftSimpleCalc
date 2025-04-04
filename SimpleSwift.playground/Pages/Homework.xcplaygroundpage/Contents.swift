@@ -26,14 +26,55 @@ print("Welcome to the UW Calculator Playground")
 //: 
 //: For this latter set of operations, it is safe to assume that `["count"]` (with no additional arguments) is 0, `["avg"]` is also 0, and `["fact"]` is 0. `["1", "fact"]` should return 1, and `["0", "fact"]` should also return 1. (Yes, 0-factorial is 1. True story.)
 //: 
+// This will be the function that takes in an array of strings
+// Only single digits?
+// If longer than 1 then evaluate
 func calculate(_ args: [String]) -> Int {
+    let length = args.count
+    
+    // Edge case where there is only 1 number or operation (assuming we should return -1 in that case)
+    // Maybe throwing exception is better
+    if length <= 1 {
+        return -1
+    }
+    
+    // Now we check if operation at end or middle
+    // Can check that by just seeing if last value is a number or not
+    let lastString = args[length - 1]
+    let index = lastString.index(lastString.startIndex, offsetBy: 0)
+    
+    if !lastString[index].isNumber{
+        // then we case switch for what operation to do
+        switch lastString {
+        case "count":
+            return length - 1
+        case "avg":
+            return sum(args) / length - 1
+        // Case is fact
+        default :
+            return 1
+        }
+    }
+    
     return -1
 }
 
+// Expects singles string containing the entire expression
 func calculate(_ arg: String) -> Int {
     return -1
 }
 
+func sum (_ args: [String]) -> Int {
+    var sum = 0;
+    
+    for s in args {
+        if let number = Int(s) {
+            sum = number + sum
+        }
+    }
+    
+    return sum;
+}
 //: Below this are the test expressions/calls to verify if your code is correct.
 //:
 //: ***DO NOT MODIFY ANYTHING BELOW THIS***
