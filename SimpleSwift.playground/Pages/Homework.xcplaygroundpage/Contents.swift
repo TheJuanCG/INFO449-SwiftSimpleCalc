@@ -35,7 +35,7 @@ func calculate(_ args: [String]) -> Int {
     // Edge case where there is only 1 number or operation (assuming we should return -1 in that case)
     // Maybe throwing exception is better
     if length <= 1 {
-        return -1
+        return 0
     }
     
     // Now we check if operation at end or middle
@@ -49,19 +49,155 @@ func calculate(_ args: [String]) -> Int {
         case "count":
             return length - 1
         case "avg":
-            return sum(args) / length - 1
+            let curSum = sum(args)
+            
+            return curSum / (length - 1)
         // Case is fact
         default :
-            return 1
+            // Need to create helper function for fact? or could just do it here
+            // Should only be one number in the beginning (or negative)
+            if var num = Int(args[0]) {
+                
+                var res = 1
+                // Fact math until reaches base case of 1 (assume there are no negative numbers)
+                while num > 1 {
+                    res = res * num
+                    num = num - 1
+                }
+                
+                return res;
+            } else {
+                // This is the case where it is just "fact" in the args
+                // shouldnt get here because of earlier if statement
+                return 0
+            }
         }
     }
     
-    return -1
+    // TO-DO operation inputs
+    let firstNum = Int(args[0]);
+    let lastNum = Int(args[length - 1])
+    let operation = args[1]
+    // Could have used dictionary for less redundancy
+    switch operation {
+    case "%":
+        if let firstNum = firstNum, let lastNum = lastNum {
+            let res = firstNum % lastNum
+            return res;
+        } else {
+            return 0
+        }
+    case "*":
+        if let firstNum = firstNum, let lastNum = lastNum {
+            let res = firstNum * lastNum
+            return res;
+        } else {
+            return 0
+        }
+    case "/":
+        if let firstNum = firstNum, let lastNum = lastNum {
+            let res = firstNum / lastNum
+            return res;
+        } else {
+            return 0
+        }
+    case "+":
+        if let firstNum = firstNum, let lastNum = lastNum {
+            let res = firstNum + lastNum
+            return res;
+        } else {
+            return 0
+        }
+    default:
+        // Case where it is '-'
+        if let firstNum = firstNum, let lastNum = lastNum {
+            let res = firstNum - lastNum
+            return res;
+        } else {
+            return 0
+        }
+    }
+    
+    //return -1
 }
 
 // Expects singles string containing the entire expression
 func calculate(_ arg: String) -> Int {
-    return -1
+    // Hardest part is getting the last word
+    // they are different lengths
+    // could just first check and see if its an operation or other
+    
+    // If not operation, could do sliding window from the right to get what it is
+    // can go character by character
+    // if number then add to list, if operation then save it
+    // if other then do that instead
+    var list: [Int] = []
+    let operatorSet: Set<Character> = ["+", "-", "*", "/", "%"]
+    var useOperator = false
+    var curOperator: Character = "_"
+    
+    for c in arg {
+        if let num = c.wholeNumberValue {
+            list.append(num)
+        } else if operatorSet.contains(c) {
+            useOperator = true
+            curOperator = c
+        } else {
+            continue
+        }
+    }
+    
+    if useOperator == true {
+        switch curOperator {
+            
+        case "+":
+            return list[0] + list[1]
+        case "-":
+            return list[0] - list[1]
+        case "*":
+            return list[0] * list[1]
+        case "/":
+            return list[0] / list[1]
+        default:
+            return list[0] % list[1]
+        }
+    }
+    
+    // Sliding window right to left to get word
+    
+    var word = ""
+    for c in arg.reversed() {
+        if c.isLetter {
+            word.append(c)
+        } else {
+            break
+        }
+    }
+    
+    word = String(word.reversed())
+    
+    switch word {
+    case "fact":
+        var base = list[0]
+        var res = 1
+        
+        while (base > 1) {
+            res = res * base
+            base = base - 1
+        }
+        
+        return res
+    case "avg":
+        var sum = 0
+        for n in list{
+            sum = sum + n
+        }
+        
+        return sum / list.count
+    default:
+        return list.count
+    }
+    //return -1
 }
 
 func sum (_ args: [String]) -> Int {
